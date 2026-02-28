@@ -1,0 +1,85 @@
+GPS Tracker Changelog
+
+gps-tracker/
+├── gpstracker.php          # Hovedpluginfil
+├── includes/
+│   ├── admin/              # Admin-faner (egen struktur)
+│   │   ├── positions.php
+│   │   ├── logs.php
+│   │   ├── settings.php
+│   │   └── statistics.php
+│   ├── admin-ui.php        # Admin / fanestyring
+│   ├── endpoints.php       # REST API-endepunkter
+│   ├── database.php        # Databaseopprettelse og migrering
+│   └── utils.php           # Fellesfunksjoner (logging m.m.)
+├── logs/
+│   └── GPSlogger_debug.txt
+├── changelog.txt
+
+Version 1.6 – 2026-01-02
+
+* Større arkitektur- og funksjonsoppdatering
+* Full refaktorering av admin-UI til fanebasert struktur
+   - Posisjoner
+   - Logger
+   - Innstillinger
+  - Statistikk
+* Flyttet databasekode fra db.php til database.php
+* Implementert hybrid autentisering på /location:
+   - API-nøkkel (header: X-GPS-API-Key)
+   - OwnTracks HTTP Basic Auth
+* Lagt til rate limiting per autentiseringstype
+   - Egen policy for OwnTracks (burst-vennlig)
+   - Egen policy for API-klienter
+* Forbedret filtrering og deduplisering av OwnTracks-data:
+   - Ignorerer jitter ved stillstand
+   - Filtrerer bort dårlig GPS-nøyaktighet
+   - Hindrer for hyppige like posisjoner
+* Støtte for fart (km/t) lagret i database
+* Kart-popup viser nå strukturert informasjon:
+   - Klokkeslett
+   - Dato
+   - Høyde
+   - Fart
+* Grunnlag lagt for statistikk:
+   - Maks fart
+   - Maks høyde
+   - Distanseberegning
+   - Periodevalg (videreutvikles)
+* Forbedret debug-logging og feilsøking
+* Generell kodeopprydding og bedre mappestruktur
+
+Version 1.5 - 2025-06-15
+* Lagt til støtte for HTTP Basic Auth på REST-endepunktet /location
+* Admin-UI utvidet med seksjon for å sette brukernavn og passord for HTTP Auth
+* REST-endepunkt sjekker nå dynamisk konfigurerte brukernavn/passord i stedet for hardkodet
+* Mindre feilrettinger og kodeopprydding
+
+Version 1.4 - 2025-06-15
+* Flyttet debug loggfil til egen logs-mappe for bedre organisering
+* Laget funksjon for sikker logging til fil i utils.php, inkludert automatisk opprettelse av logs-mappe
+* Oppdatert admin-UI til å lese loggfil fra logs-mappe
+* Forbedret feilhåndtering ved logging (sjekker at mappen eksisterer og er skrivbar)
+* Justert fil- og mappestruktur for bedre oversikt og vedlikehold
+* Små feilrettinger og kodeforbedringer
+* Laget shortcode
+
+Version 1.3 - 2025-06-10
+* Splittet plugin i flere filer for bedre oversikt:
+  - db.php (database)
+  - endpoints.php (REST API)
+  - admin-ui.php (admingrensesnitt)
+  - utils.php (fellesfunksjoner)
+* Lagt til debug logging som kan aktiveres via adminside
+* Forbedret struktur og navngivning
+* Returverdier i REST API forbedret
+* Sikkerhet: sjekker at plugin ikke kan lastes direkte
+
+Version 1.2 - 2025-06-04
+* Mindre endringer i loggen, fjernet "speed" da den failer med NULL
+
+Version 1.1 - 2025-06-02
+* Laget debug funksjonen
+
+Version 1.0 - 2025-05-28
+* Opprettet gps-tracker.php og databasen

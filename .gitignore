@@ -1,0 +1,19 @@
+# WordPress junk
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/*.txt
+
+# Local config
+.env
+
+# Node
+node_modules/
+
+# Composer
+vendor/
+
+# IDE
+.vscode/
+.idea/
