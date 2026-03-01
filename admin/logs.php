@@ -3,7 +3,7 @@
  * Filename: logs.php
  * Description: Admin view for displaying the GPS Tracker debug log file.
  *              Shows the log content in reverse order (newest first).
- * Version: 1.6
+ * Version: 1.7
  * Author: Ørjan Jenssen
  */
 
