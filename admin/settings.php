@@ -4,7 +4,7 @@
  * Description: Admin settings page for GPS Tracker. Handles configuration for
  *              REST API access, map providers (including MapTiler),
  *              HTTP Basic Authentication for OwnTracks, and debug logging.
- * Version: 1.6
+ * Version: 1.7
  * Author: Ørjan Jenssen
  */
 
