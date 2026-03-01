@@ -5,7 +5,7 @@
  *              Displays aggregated GPS data including total points,
  *              first/last timestamps, points per day, battery levels over time,
  *              and points per tracking device (TID).
- * Version: 1.6
+ * Version: 1.7
  * Author: Ørjan Jenssen
  */
 
