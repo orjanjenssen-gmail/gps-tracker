@@ -1,4 +1,10 @@
 <?php
+/**
+ * Filename: auth.php
+ * Description: Admin interface and navigation for GPS Tracker.
+ * Version: 1.7
+ * Author: Ørjan Jenssen
+ */
 defined('ABSPATH') || exit;
 
 /**
