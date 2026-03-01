@@ -5,7 +5,7 @@
  *              Creates and updates the custom table used to store GPS locations,
  *              including coordinates, altitude, speed, battery level, timestamp
  *              and device identifier (TID).
- * Version: 1.6
+ * Version: 1.7
  * Author: Ørjan Jenssen
  */
 
