@@ -127,9 +127,12 @@ function gpstracker_get_history()
     $rows = $wpdb->get_results("
         SELECT lat, lon, altitude, speed, battery, timestamp
         FROM {$wpdb->prefix}gps_tracker
-        ORDER BY timestamp ASC
+        ORDER BY timestamp DESC
         LIMIT 500
     ");
+
+    // Snu tilbake slik at track tegnes kronologisk
+    $rows = array_reverse($rows);
 
     return array_map(function ($r) {
 
