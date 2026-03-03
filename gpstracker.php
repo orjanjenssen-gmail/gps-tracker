@@ -1,13 +1,16 @@
 <?php
 /**
- * Plugin Name: GPSTracker
- * Description: Receives GPS data via REST API and displays positions on maps.
+ * Plugin Name: GPS Tracker Pro (OwnTracks)
+ * Description: Advanced GPS tracking plugin for WordPress with OwnTracks integration, secure REST endpoints and historical route analytics.
  * Version: 1.8
  * Author: Ørjan Jenssen
  * Author URI: https://www.tulipankroken.no
  * Plugin URI: https://github.com/orjanjenssen-gmail/gps-tracker/
+ * Requires at least: 6.0
+ * Requires PHP: 8.0
+ * Tested up to: 6.4
  */
-
+ 
 defined('ABSPATH') or exit;
 
 /*
