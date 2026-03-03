@@ -2,7 +2,7 @@
 /**
  * Filename: debug.php
  * Description: Live debug log viewer for GPS Tracker.
- * Version: 1.7
+ * Version: 1.8
  * Author: Ørjan Jenssen
  */
 
@@ -25,7 +25,9 @@ defined('ABSPATH') or exit;
 <script>
 async function loadDebug() {
     try {
-        const res = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/debug-log')); ?>');
+        const res = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/debug-log')); ?>', {
+    credentials: 'same-origin'
+});
 
         if (!res.ok) {
             throw new Error('HTTP ' + res.status);
