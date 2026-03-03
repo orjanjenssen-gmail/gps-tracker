@@ -24,7 +24,31 @@ gps-tracker/
 ├── changelog.txt
 └── gpstracker.php
 
-Version 1.7 – 2026-03-03
+Version 1.8 – 2026-03-03
+* REST & Admin fixes
+   - Fixed 401 Unauthorized errors in admin REST requests
+   - Implemented proper WP REST nonce handling in admin modules
+   - Ensured authenticated admin access without breaking public endpoints
+* Admin Map
+   - Restored dynamic map provider support (OSM, MapTiler, Esri, OpenTopoMap)
+   - Restored map style selection for MapTiler
+   - Restored detailed popup information:
+     - Date (dd-mm-yyyy)
+     - Time (local WP timezone)
+     - Altitude
+     - Speed
+     - Battery level
+* Time handling
+   - Fixed timezone mismatch in admin map popups
+   - Unified UTC storage with WP timezone formatting
+* Public map
+   - Restored stable shortcode rendering
+   - Ensured public /current endpoint works independently of admin authentication
+* Stability
+   - Reverted unintended functional changes
+   - Verified compatibility with existing OwnTracks configuration
+
+Version 1.7 – 2026-02-15
 * Strukturendringer
    - Flyttet admin-moduler til egen /admin mappe
    - Skilt autentisering ut i includes/auth.php
