@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: GPS Tracker Pro (OwnTracks)
- * Description: Advanced GPS tracking plugin for WordPress with OwnTracks integration, secure REST endpoints and historical route analytics.
+ * Description: Advanced GPS tracking plugin for WordPress with OwnTracks integration and historical route analytics.
  * Version: 1.8
  * Author: Ørjan Jenssen
  * Author URI: https://www.tulipankroken.no
