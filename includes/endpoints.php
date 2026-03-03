@@ -5,35 +5,42 @@
  * Version: 1.7
  * Author: Ørjan Jenssen
  */
-
 defined('ABSPATH') or exit;
 
 add_action('rest_api_init', function () {
 
+    // POST location (secured)
     register_rest_route('gpstracker/v1', '/location', [
         'methods'  => 'POST',
         'callback' => 'gpstracker_receive_location',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function ($request) {
+            return gpstracker_authenticate_request($request);
+        },
     ]);
 
+    // Public current position
     register_rest_route('gpstracker/v1', '/current', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_current_location',
         'permission_callback' => '__return_true',
     ]);
 
-    // 🔥 History for polyline
+    // Admin only history
     register_rest_route('gpstracker/v1', '/history', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_history',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function () {
+            return current_user_can('manage_options');
+        },
     ]);
 
-    // 🪵 Debug log (REST)
+    // Admin only debug log
     register_rest_route('gpstracker/v1', '/debug-log', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_debug_log',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function () {
+            return current_user_can('manage_options');
+        },
     ]);
 });
 
@@ -81,7 +88,7 @@ function gpstracker_receive_location(WP_REST_Request $request)
 
 /*
 |--------------------------------------------------------------------------
-| Latest position
+| Current position (public)
 |--------------------------------------------------------------------------
 */
 
@@ -108,13 +115,12 @@ function gpstracker_get_current_location()
         'battery'      => $row->battery,
         'updated_time' => gpstracker_format_datetime($row->timestamp, 'H:i:s'),
         'updated_date' => gpstracker_format_datetime($row->timestamp, 'Y-m-d'),
-        'timestamp_utc'=> $row->timestamp,
     ];
 }
 
 /*
 |--------------------------------------------------------------------------
-| History for polyline
+| History (admin only)
 |--------------------------------------------------------------------------
 */
 
@@ -130,16 +136,13 @@ function gpstracker_get_history()
     ");
 
     return array_map(function ($r) {
-        return [
-            (float) $r->lat,
-            (float) $r->lon
-        ];
+        return [(float)$r->lat, (float)$r->lon];
     }, $rows);
 }
 
 /*
 |--------------------------------------------------------------------------
-| Debug log REST endpoint
+| Debug log (admin only)
 |--------------------------------------------------------------------------
 */
 
@@ -148,9 +151,7 @@ function gpstracker_get_debug_log()
     $file = gpstracker_get_log_file();
 
     if (!file_exists($file) || !is_readable($file)) {
-        return [
-            'lines' => []
-        ];
+        return ['lines' => []];
     }
 
     $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
