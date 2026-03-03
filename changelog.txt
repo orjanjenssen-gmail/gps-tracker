@@ -1,20 +1,60 @@
 GPS Tracker Changelog
 
 gps-tracker/
-├── gpstracker.php          # Hovedpluginfil
+├── admin/
+│   ├── debug.php
+│   ├── logs.php
+│   ├── map.php
+│   ├── positions.php
+│   ├── settings.php
+│   └── statistics.php
+│
 ├── includes/
-│   ├── admin/              # Admin-faner (egen struktur)
-│   │   ├── positions.php
-│   │   ├── logs.php
-│   │   ├── settings.php
-│   │   └── statistics.php
-│   ├── admin-ui.php        # Admin / fanestyring
-│   ├── endpoints.php       # REST API-endepunkter
-│   ├── database.php        # Databaseopprettelse og migrering
-│   └── utils.php           # Fellesfunksjoner (logging m.m.)
+│   ├── admin-ui.php
+│   ├── auth.php
+│   ├── database.php
+│   ├── endpoints.php
+│   ├── utils.php
+│   └── version.php
+│
 ├── logs/
-│   └── GPSlogger_debug.txt
+│
+├── .gitignore
+├── README.md
 ├── changelog.txt
+└── gpstracker.php
+
+Version 1.7 – 2026-03-03
+* Strukturendringer
+   - Flyttet admin-moduler til egen /admin mappe
+   - Skilt autentisering ut i includes/auth.php
+   - Innført includes/version.php for sentral versjonshåndtering
+   - Separert kartvisning i egen map.php
+   - Egen debug-modul (admin/debug.php)
+* Autentisering
+   - Hybrid autentisering:
+   - API Key (X-GPS-API-Key)
+   - HTTP Basic Auth (OwnTracks)
+   - Rate limiting pr autentiseringstype
+* Posisjonshåndtering
+   - Deduplisering ved stillstand
+   - Accuracy-filter
+   - Jitter-filtrering
+   - Lagring av fart og høyde
+* Statistikk
+   - Maks fart
+   - Maks høyde
+   - Distanseberegning (Haversine)
+   - Periodevalg
+* Admin UI
+   - Fanebasert struktur
+   - Separat kartvisning
+   - Forbedret loggvisning
+   - Egen debug-side
+* Teknisk
+   - Bedre separasjon av ansvar
+   - Mindre coupling mellom UI og backend
+   - Klargjort for videre utvidelser
 
 Version 1.6 – 2026-01-02
 
