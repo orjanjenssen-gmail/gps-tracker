@@ -55,3 +55,21 @@ function gpstracker_on_activate()
     add_option('gpstracker_debug_log', '0');
     add_option('gpstracker_debug_level', 'INFO');
 }
+
+/*
+|--------------------------------------------------------------------------
+| Admin menu
+|--------------------------------------------------------------------------
+*/
+
+add_action('admin_menu', function () {
+    add_menu_page(
+        GPSTRACKER_NAME,
+        GPSTRACKER_NAME,
+        'manage_options',
+        'gps-tracker-admin',
+        'render_gps_tracker_admin',
+        'dashicons-location-alt',
+        100
+    );
+});
