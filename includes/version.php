@@ -13,4 +13,4 @@ defined('ABSPATH') or exit;
  */
 define('GPSTRACKER_NAME', 'GPS Tracker');
 define('GPSTRACKER_SLUG', 'gps-tracker');
-define('GPSTRACKER_VERSION', '1.7');
+define('GPSTRACKER_VERSION', '1.8');
