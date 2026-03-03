@@ -2,10 +2,15 @@
 /**
  * Filename: map.php
  * Description: Admin map view with GPS track polyline.
- * Version: 1.7
+ * Version: 1.8
  * Author: Ørjan Jenssen
  */
+
 defined('ABSPATH') or exit;
+
+$provider = get_option('gpstracker_provider', 'osm');
+$style    = get_option('gpstracker_maptiler_style', 'streets');
+$map_key  = get_option('gpstracker_maptiler_key', '');
 ?>
 
 <h2>🗺 Map (with track)</h2>
@@ -23,7 +28,31 @@ const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
 (async function () {
 
     const map = L.map('gps-admin-map');
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
+    let tiles;
+
+    <?php if ($provider === 'maptiler' && !empty($map_key)) : ?>
+        tiles = L.tileLayer(
+            'https://api.maptiler.com/maps/<?php echo esc_js($style); ?>/256/{z}/{x}/{y}.png?key=<?php echo esc_js($map_key); ?>',
+            { attribution: '&copy; MapTiler' }
+        );
+    <?php elseif ($provider === 'esri') : ?>
+        tiles = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            { attribution: '&copy; Esri' }
+        );
+    <?php elseif ($provider === 'topo') : ?>
+        tiles = L.tileLayer(
+            'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            { attribution: '&copy; OpenTopoMap' }
+        );
+    <?php else : ?>
+        tiles = L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            { attribution: '&copy; OpenStreetMap' }
+        );
+    <?php endif; ?>
+
     tiles.addTo(map);
 
     const historyRes = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/history')); ?>', {
