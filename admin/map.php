@@ -28,7 +28,6 @@ const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
 (async function () {
 
     const map = L.map('gps-admin-map');
-
     let tiles;
 
     <?php if ($provider === 'maptiler' && !empty($map_key)) : ?>
@@ -57,9 +56,7 @@ const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
 
     const historyRes = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/history')); ?>', {
         credentials: 'same-origin',
-        headers: {
-            'X-WP-Nonce': gpstrackerRestNonce
-        }
+        headers: { 'X-WP-Nonce': gpstrackerRestNonce }
     });
 
     if (!historyRes.ok) {
@@ -68,14 +65,24 @@ const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
     }
 
     const points = await historyRes.json();
-
     if (!points.length) return;
 
-    const polyline = L.polyline(points, { color: 'red' }).addTo(map);
+    const latlngs = points.map(p => [p.lat, p.lon]);
+
+    const polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
     map.fitBounds(polyline.getBounds());
 
-    L.marker(points[points.length - 1]).addTo(map)
-        .bindPopup('Latest position')
+    const last = points[points.length - 1];
+
+    L.marker([last.lat, last.lon]).addTo(map)
+        .bindPopup(`
+            <strong>Latest position</strong><br>
+            Date: ${last.date}<br>
+            Time: ${last.time}<br>
+            Altitude: ${last.altitude ?? '-'} m<br>
+            Speed: ${last.speed ?? '-'} km/h<br>
+            Battery: ${last.battery ?? '-'} %
+        `)
         .openPopup();
 
 })();
