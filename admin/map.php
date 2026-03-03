@@ -5,7 +5,6 @@
  * Version: 1.7
  * Author: Ørjan Jenssen
  */
-
 defined('ABSPATH') or exit;
 ?>
 
@@ -17,13 +16,28 @@ defined('ABSPATH') or exit;
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
+</script>
+
+<script>
 (async function () {
 
     const map = L.map('gps-admin-map');
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     tiles.addTo(map);
 
-    const historyRes = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/history')); ?>');
+    const historyRes = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/history')); ?>', {
+        credentials: 'same-origin',
+        headers: {
+            'X-WP-Nonce': gpstrackerRestNonce
+        }
+    });
+
+    if (!historyRes.ok) {
+        console.error('History fetch failed:', historyRes.status);
+        return;
+    }
+
     const points = await historyRes.json();
 
     if (!points.length) return;
