@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: GPS Tracker
- * Description: Receives GPS data via REST API and displays positions on maps.
+ * Description: Receives GPS data via REST API and displays positions on maps11111.
  * Version: 1.8
  * Author: Ørjan Jenssen
  */
