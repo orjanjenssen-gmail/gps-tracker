@@ -2,30 +2,26 @@
 /**
  * Filename: endpoints.php
  * Description: REST API endpoints for GPS Tracker.
- * Version: 1.7
+ * Version: 1.8
  * Author: Ørjan Jenssen
  */
+
 defined('ABSPATH') or exit;
 
 add_action('rest_api_init', function () {
 
-    // POST location (secured)
     register_rest_route('gpstracker/v1', '/location', [
         'methods'  => 'POST',
         'callback' => 'gpstracker_receive_location',
-        'permission_callback' => function ($request) {
-            return gpstracker_authenticate_request($request);
-        },
+        'permission_callback' => '__return_true',
     ]);
 
-    // Public current position
     register_rest_route('gpstracker/v1', '/current', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_current_location',
         'permission_callback' => '__return_true',
     ]);
 
-    // Admin only history
     register_rest_route('gpstracker/v1', '/history', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_history',
@@ -34,7 +30,6 @@ add_action('rest_api_init', function () {
         },
     ]);
 
-    // Admin only debug log
     register_rest_route('gpstracker/v1', '/debug-log', [
         'methods'  => 'GET',
         'callback' => 'gpstracker_get_debug_log',
@@ -88,7 +83,7 @@ function gpstracker_receive_location(WP_REST_Request $request)
 
 /*
 |--------------------------------------------------------------------------
-| Current position (public)
+| Latest position
 |--------------------------------------------------------------------------
 */
 
@@ -113,14 +108,15 @@ function gpstracker_get_current_location()
         'altitude'     => $row->altitude,
         'speed'        => $row->speed,
         'battery'      => $row->battery,
-        'updated_time' => gpstracker_format_datetime($row->timestamp, 'H:i:s'),
-        'updated_date' => gpstracker_format_datetime($row->timestamp, 'Y-m-d'),
+        'updated_time' => gpstracker_format_datetime($row->timestamp, 'H:i'),
+        'updated_date' => gpstracker_format_datetime($row->timestamp, 'd-m-Y'),
+        'timestamp_utc'=> $row->timestamp,
     ];
 }
 
 /*
 |--------------------------------------------------------------------------
-| History (admin only)
+| History for admin map
 |--------------------------------------------------------------------------
 */
 
@@ -129,20 +125,30 @@ function gpstracker_get_history()
     global $wpdb;
 
     $rows = $wpdb->get_results("
-        SELECT lat, lon
+        SELECT lat, lon, altitude, speed, battery, timestamp
         FROM {$wpdb->prefix}gps_tracker
         ORDER BY timestamp ASC
         LIMIT 500
     ");
 
     return array_map(function ($r) {
-        return [(float)$r->lat, (float)$r->lon];
+
+        return [
+            'lat'      => (float) $r->lat,
+            'lon'      => (float) $r->lon,
+            'altitude' => $r->altitude,
+            'speed'    => $r->speed,
+            'battery'  => $r->battery,
+            'date'     => gpstracker_format_datetime($r->timestamp, 'd-m-Y'),
+            'time'     => gpstracker_format_datetime($r->timestamp, 'H:i')
+        ];
+
     }, $rows);
 }
 
 /*
 |--------------------------------------------------------------------------
-| Debug log (admin only)
+| Debug log REST endpoint
 |--------------------------------------------------------------------------
 */
 
