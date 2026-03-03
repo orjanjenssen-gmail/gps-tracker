@@ -5,16 +5,24 @@
  * Version: 1.7
  * Author: Ørjan Jenssen
  */
-
 defined('ABSPATH') or exit;
+
+if (!current_user_can('manage_options')) {
+    return;
+}
 
 global $wpdb;
 $table = $wpdb->prefix . 'gps_tracker';
 
-// Delete single row
-if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
-    $wpdb->delete($table, ['id' => (int) $_GET['delete']]);
-    echo '<div class="updated"><p>Position deleted.</p></div>';
+// Delete single row (CSRF protected)
+if (isset($_GET['delete']) && isset($_GET['_wpnonce'])) {
+
+    $id = (int) $_GET['delete'];
+
+    if (wp_verify_nonce($_GET['_wpnonce'], 'gpstracker_delete_' . $id)) {
+        $wpdb->delete($table, ['id' => $id]);
+        echo '<div class="updated"><p>Position deleted.</p></div>';
+    }
 }
 
 // Delete all
@@ -36,20 +44,18 @@ if (!$rows) {
 }
 
 echo '<table class="widefat striped">';
-echo '<thead>
-<tr>
-    <th>ID</th>
-    <th>Time</th>
-    <th>Lat</th>
-    <th>Lon</th>
-    <th>Altitude</th>
-    <th>Speed</th>
-    <th>Battery</th>
-    <th></th>
-</tr>
-</thead><tbody>';
+echo '<thead><tr>
+<th>ID</th><th>Time</th><th>Lat</th><th>Lon</th>
+<th>Altitude</th><th>Speed</th><th>Battery</th><th></th>
+</tr></thead><tbody>';
 
 foreach ($rows as $r) {
+
+    $delete_url = wp_nonce_url(
+        admin_url('admin.php?page=gps-tracker-admin&tab=positions&delete=' . (int)$r->id),
+        'gpstracker_delete_' . (int)$r->id
+    );
+
     echo '<tr>';
     echo '<td>' . esc_html($r->id) . '</td>';
     echo '<td>' . esc_html(gpstracker_format_datetime($r->timestamp, 'H:i d.m.Y')) . '</td>';
@@ -58,7 +64,7 @@ foreach ($rows as $r) {
     echo '<td>' . esc_html($r->altitude ?? '-') . ' m</td>';
     echo '<td>' . esc_html($r->speed ?? '-') . ' km/h</td>';
     echo '<td>' . esc_html($r->battery ?? '-') . '%</td>';
-    echo '<td><a class="button" href="?page=gps-tracker-admin&tab=positions&delete=' . (int) $r->id . '">Delete</a></td>';
+    echo '<td><a class="button" href="' . esc_url($delete_url) . '">Delete</a></td>';
     echo '</tr>';
 }
 
