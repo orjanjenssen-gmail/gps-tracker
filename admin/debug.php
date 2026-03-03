@@ -23,12 +23,18 @@ defined('ABSPATH') or exit;
 "></div>
 
 <script>
+const gpstrackerRestNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
+</script>
+
+<script>
 async function loadDebug() {
     try {
         const res = await fetch('<?php echo esc_url(rest_url('gpstracker/v1/debug-log')); ?>', {
-    credentials: 'same-origin'
+    credentials: 'same-origin',
+    headers: {
+        'X-WP-Nonce': gpstrackerRestNonce
+    }
 });
-
         if (!res.ok) {
             throw new Error('HTTP ' + res.status);
         }
